@@ -1,0 +1,41 @@
+<% content_for :title, "Pricing" %>
+
+<section class="mx-auto max-w-4xl px-5 py-20">
+  <div class="text-center">
+    <h1 class="text-4xl font-extrabold tracking-tight text-ink">Simple pricing</h1>
+    <p class="prose-lead mx-auto mt-3 max-w-xl">Start free. Upgrade when you're ready.</p>
+  </div>
+
+  <div class="mt-12 grid gap-6 sm:grid-cols-2">
+    <div class="card">
+      <h2 class="text-lg font-bold text-ink">Free</h2>
+      <p class="mt-2 text-3xl font-extrabold text-ink">$0<span class="text-base font-medium text-muted">/mo</span></p>
+      <ul class="mt-5 space-y-2 text-sm text-body">
+        <li>✓ The essentials</li>
+        <li>✓ One workspace</li>
+      </ul>
+      <% unless authenticated? %>
+        <%= link_to "Get started", new_registration_path, class: "btn btn-outline mt-6 w-full" %>
+      <% end %>
+    </div>
+
+    <div class="card ring-2 ring-brand">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-bold text-ink">Pro</h2>
+        <span class="badge">Popular</span>
+      </div>
+      <p class="mt-2 text-3xl font-extrabold text-ink">$<%= Plan::PRICE %><span class="text-base font-medium text-muted">/<%= Plan::INTERVAL %></span></p>
+      <ul class="mt-5 space-y-2 text-sm text-body">
+        <li>✓ Everything in Free</li>
+        <li>✓ The paid features you build</li>
+      </ul>
+      <% if Current.account&.pro? %>
+        <span class="btn btn-outline mt-6 w-full cursor-default">You're on Pro</span>
+      <% else %>
+        <%= button_to "Upgrade to Pro", subscription_path, class: "btn btn-primary mt-6 w-full" %>
+      <% end %>
+    </div>
+  </div>
+
+  <p class="mt-8 text-center text-sm text-muted">Payments by Stripe. Prices here are display-only until you wire your Stripe price (<code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs">bin/rails stripe:setup</code>).</p>
+</section>

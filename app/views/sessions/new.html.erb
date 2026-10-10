@@ -1,0 +1,39 @@
+<% content_for :title, "Sign in" %>
+
+<div class="card">
+  <% if @email %>
+    <h1 class="text-xl font-bold text-ink">Enter your code</h1>
+    <p class="mt-1 text-sm text-muted">We emailed a 6-digit code to <strong class="text-ink"><%= @email %></strong>.</p>
+
+    <%= form_with url: session_path, method: :post, class: "mt-5 space-y-4" do |f| %>
+      <div>
+        <%= f.label :code, "6-digit code", class: "label" %>
+        <%= f.text_field :code, inputmode: "numeric", autocomplete: "one-time-code", maxlength: 6,
+              autofocus: true, required: true, class: "input text-center text-lg tracking-[.4em]" %>
+      </div>
+      <%= f.submit "Sign in", class: "btn btn-primary w-full" %>
+    <% end %>
+
+    <div class="mt-4 flex items-center justify-between text-sm">
+      <%= button_to "Resend code", session_code_path, params: { email_address: @email },
+            class: "font-semibold text-brand hover:underline" %>
+      <%= link_to "Use a different email", new_session_path(reset: 1), class: "text-muted hover:text-ink" %>
+    </div>
+  <% else %>
+    <h1 class="text-xl font-bold text-ink">Sign in</h1>
+    <p class="mt-1 text-sm text-muted">We'll email you a 6-digit code — no password needed.</p>
+
+    <%= form_with url: session_code_path, method: :post, class: "mt-5 space-y-4" do |f| %>
+      <div>
+        <%= f.label :email_address, "Email", class: "label" %>
+        <%= f.email_field :email_address, autofocus: true, required: true,
+              placeholder: "you@example.com", class: "input" %>
+      </div>
+      <%= f.submit "Send me a code", class: "btn btn-primary w-full" %>
+    <% end %>
+
+    <p class="mt-5 text-center text-sm text-muted">
+      New here? <%= link_to "Create an account", new_registration_path, class: "font-semibold text-brand hover:underline" %>
+    </p>
+  <% end %>
+</div>

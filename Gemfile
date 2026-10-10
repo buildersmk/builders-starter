@@ -19,8 +19,15 @@ gem "tailwindcss-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+# Hash the 6-digit login codes (passwordless auth) [https://github.com/bcrypt-ruby/bcrypt-ruby]
+gem "bcrypt", "~> 3.1.7"
+
+# --- Integrations (each idle until its ENV key is set; see .env.example) ---
+# Stripe — subscription billing (checkout + customer portal + webhook)
+gem "stripe", "~> 15.0"
+# Faraday — HTTP client for the Kit (ConvertKit) boundary
+gem "faraday", "~> 2.0"
+# OpenRouter + Apify use the stdlib net/http (no gem). Resend uses ActionMailer SMTP (no gem).
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -56,9 +63,18 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 end
 
+group :development, :test do
+  # Load ENV from .env for the local/.env secrets path (the Doppler path injects ENV itself,
+  # so this is a no-op under `doppler run`). See bin/setup.
+  gem "dotenv-rails"
+end
+
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Opens sent emails in the browser instead of delivering them (login codes, welcome).
+  gem "letter_opener"
 end
 
 group :test do

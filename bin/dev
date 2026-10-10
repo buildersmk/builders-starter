@@ -1,2 +1,24 @@
-#!/usr/bin/env ruby
-exec "./bin/rails", "server", *ARGV
+#!/usr/bin/env sh
+
+if ! gem list foreman -i --silent; then
+  echo "Installing foreman..."
+  gem install foreman
+fi
+
+# Default to port 3100 (3000 is often taken; override with PORT=xxxx bin/dev).
+export PORT="${PORT:-3100}"
+
+# Let the debug gem allow remote connections, but avoid loading until `debugger` is called.
+export RUBY_DEBUG_OPEN="true"
+export RUBY_DEBUG_LAZY="true"
+
+# If Doppler is set up for this directory and we're not already inside a `doppler run`,
+# start through it so the dev server gets your secrets. Otherwise dotenv loads .env.
+# Set BUILDERS_NO_DOPPLER=1 to always skip.
+if [ -z "$DOPPLER_PROJECT" ] && [ -z "$BUILDERS_NO_DOPPLER" ] && \
+   command -v doppler >/dev/null 2>&1 && doppler configure get config --plain >/dev/null 2>&1; then
+  echo "→ Starting through Doppler (doppler run)…"
+  exec doppler run -- foreman start -f Procfile.dev "$@"
+fi
+
+exec foreman start -f Procfile.dev "$@"

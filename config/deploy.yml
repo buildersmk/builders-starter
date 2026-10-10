@@ -1,0 +1,55 @@
+# Kamal deploy config. Fill in the host, domain and registry, then `kamal setup`.
+# (Deployment is not automatic in this starter — add your own CI if you want push-to-deploy.)
+service: builders-starter
+image: your-registry-user/builders-starter
+
+servers:
+  web:
+    - 192.168.0.1 # ← your server's IP or hostname
+
+proxy:
+  ssl: true
+  host: app.example.com # ← your domain (Let's Encrypt via Kamal's proxy)
+
+registry:
+  server: ghcr.io
+  username: your-registry-user
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Jobs run inside the web container (no separate worker) — the lean single-box default.
+env:
+  secret:
+    - SECRET_KEY_BASE
+    - DATABASE_PASSWORD
+    - RESEND_API_KEY
+    - STRIPE_SECRET_KEY
+    - STRIPE_WEBHOOK_SECRET
+    - KIT_API_KEY
+    - OPENROUTER_API_KEY
+    - APIFY_API_TOKEN
+  clear:
+    APP_HOST: https://app.example.com
+    APP_HOST_NAME: app.example.com
+    MAILER_SENDER: Builders Starter <onboarding@example.com>
+    MULTI_TENANT: "false"
+    # Supabase transaction pooler (port 6543). DATABASE_PASSWORD is a secret above.
+    DATABASE_HOST: your-project.pooler.supabase.com
+    DATABASE_PORT: "6543"
+    DATABASE_USERNAME: postgres.your-project-ref
+    DATABASE_NAME: postgres
+    KIT_TAG_ID: ""
+    OPENROUTER_MODEL: openai/gpt-4o-mini
+    SOLID_QUEUE_IN_PUMA: "true"
+    WEB_CONCURRENCY: "2"
+
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole"
+
+asset_path: /rails/public/assets
+
+builder:
+  arch: amd64

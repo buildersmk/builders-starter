@@ -47,26 +47,34 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
 
   # Replace the default in-process memory cache store with a durable alternative.
-  # config.cache_store = :mem_cache_store
+  config.cache_store = :solid_cache_store
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
-  # config.active_job.queue_adapter = :resque
+  # Solid Queue runs in the primary database (single-database setup), so no connects_to.
+  config.active_job.queue_adapter = :solid_queue
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
-  # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  # Links in mailer templates use this host (your verified sending domain).
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST_NAME", "example.com"), protocol: "https" }
+  config.action_mailer.asset_host = "https://#{ENV.fetch("APP_HOST_NAME", "example.com")}"
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
+  # Email over Resend's SMTP relay. Idle-until-keyed: with no RESEND_API_KEY, delivery just fails
+  # quietly (raise_delivery_errors is off), so the app runs fine before you set email up. The SMTP
+  # username is the literal string "resend"; the password is your Resend API key.
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "smtp.resend.com",
+    port: 587,
+    user_name: "resend",
+    password: ENV["RESEND_API_KEY"],
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

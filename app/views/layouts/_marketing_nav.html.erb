@@ -1,0 +1,16 @@
+<header class="sticky top-0 z-40 border-b border-line bg-surface/80 backdrop-blur">
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+    <%= link_to root_path, class: "text-lg font-extrabold tracking-tight text-ink" do %>
+      builders<span class="text-brand">.</span>starter
+    <% end %>
+    <nav class="flex items-center gap-2">
+      <%= link_to "Pricing", pricing_path, class: "hidden px-3 text-sm font-medium text-muted hover:text-ink sm:inline" %>
+      <% if authenticated? %>
+        <%= link_to "Dashboard", dashboard_path, class: "btn btn-primary btn-sm" %>
+      <% else %>
+        <%= link_to "Sign in", new_session_path, class: "px-3 text-sm font-semibold text-ink hover:text-brand" %>
+        <%= link_to "Get started", new_registration_path, class: "btn btn-primary btn-sm" %>
+      <% end %>
+    </nav>
+  </div>
+</header>

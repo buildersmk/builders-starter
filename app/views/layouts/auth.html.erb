@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head><%= render "layouts/head" %></head>
+  <body class="min-h-full bg-canvas font-sans text-body antialiased">
+    <main class="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-5 py-12">
+      <%= link_to root_path, class: "mb-8 text-center text-lg font-extrabold tracking-tight text-ink" do %>
+        builders<span class="text-brand">.</span>starter
+      <% end %>
+      <%= render "layouts/flash" %>
+      <%= yield %>
+    </main>
+  </body>
+</html>
