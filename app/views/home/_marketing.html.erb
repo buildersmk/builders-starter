@@ -1,0 +1,57 @@
+<%# The marketing page — this is YOUR product's landing page. Edit it freely (just ask Claude).
+    In development it lives at /preview; in production it's the home page. %>
+
+<%# ---- Hero ---- %>
+<section class="mx-auto max-w-6xl px-5 pt-20 pb-16 text-center sm:pt-28">
+  <span class="badge mb-5">Rails 8 · Hotwire · Tailwind</span>
+  <h1 class="mx-auto max-w-3xl text-4xl font-extrabold tracking-tight text-ink sm:text-6xl">
+    The lean Rails starter for your <span class="text-brand">first customer</span>.
+  </h1>
+  <p class="prose-lead mx-auto mt-6 max-w-2xl">
+    A clean, powerful foundation — passwordless auth, billing, email and a marketing funnel wired in,
+    idle until you drop in a key. Clone it, add your idea, ship.
+  </p>
+  <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+    <%= link_to "Get started", new_registration_path, class: "btn btn-primary btn-lg" %>
+    <%= link_to "See pricing", pricing_path, class: "btn btn-outline btn-lg" %>
+  </div>
+</section>
+
+<%# ---- Integrations, idle until keyed ---- %>
+<section class="mx-auto max-w-6xl px-5 py-10">
+  <div class="card">
+    <h2 class="text-xl font-bold text-ink">Wired in, idle until you add a key</h2>
+    <p class="mt-1 text-sm text-muted">Everything below is scaffolded. Drop a key in <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs">.env</code> (or Doppler) and it switches on.</p>
+    <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <% {
+           "Stripe" => "Subscriptions — checkout, customer portal, webhooks.",
+           "Resend" => "Transactional email over SMTP.",
+           "Kit" => "Lead capture → subscriber + tag.",
+           "OpenRouter" => "One client for any LLM.",
+           "Apify" => "Scraping actors, sync or async.",
+           "Supabase" => "Postgres in production, pooler-ready."
+         }.each do |name, body| %>
+        <div class="flex gap-3">
+          <span class="mt-1 h-2 w-2 shrink-0 rounded-full bg-accent"></span>
+          <div>
+            <p class="text-sm font-semibold text-ink"><%= name %></p>
+            <p class="text-sm text-muted"><%= body %></p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# ---- Lead capture (Kit) ---- %>
+<section class="mx-auto max-w-6xl px-5 py-16">
+  <div class="mx-auto max-w-xl rounded-2xl border border-line bg-brand-soft p-8 text-center">
+    <h2 class="text-2xl font-bold text-ink">Get the build updates</h2>
+    <p class="mt-2 text-sm text-muted">Drop your email — we'll send what we ship. (Powered by the Kit integration.)</p>
+    <%= form_with url: lead_path, method: :post, class: "mt-5 flex flex-col gap-3 sm:flex-row" do |f| %>
+      <%= f.email_field :email, required: true, placeholder: "you@example.com",
+            class: "input", aria: { label: "Email" } %>
+      <%= f.submit "Notify me", class: "btn btn-primary shrink-0" %>
+    <% end %>
+  </div>
+</section>

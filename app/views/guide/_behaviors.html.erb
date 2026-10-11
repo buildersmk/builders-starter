@@ -1,0 +1,53 @@
+<%# Self-contained behaviours for the dev-only guide/welcome: scroll-reveal, copy-to-clipboard,
+    and a scroll-progress bar. Plain vanilla JS (the kit has no JS build); CSP is open in dev.
+    Everything degrades gracefully — if this doesn't run, the pages are fully readable. %>
+<div class="guide-progress" data-progress hidden></div>
+<script>
+  (function () {
+    document.documentElement.classList.add("js");
+
+    // Reveal elements once as they scroll into view.
+    var reveals = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window && reveals.length) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        });
+      }, { rootMargin: "0px 0px -8% 0px" });
+      reveals.forEach(function (el) { io.observe(el); });
+    }
+
+    // Copy-to-clipboard: any element with data-copy copies its value and flips to "Copied".
+    document.addEventListener("click", function (event) {
+      var button = event.target.closest("[data-copy]");
+      if (!button || !navigator.clipboard) return;
+
+      navigator.clipboard.writeText(button.getAttribute("data-copy")).then(function () {
+        var label = button.querySelector("[data-copy-label]") || button;
+        var original = label.getAttribute("data-original") || label.textContent;
+        label.setAttribute("data-original", original);
+        label.textContent = "Copied ✓";
+        button.classList.add("border-brand", "bg-brand-soft");
+        setTimeout(function () {
+          label.textContent = original;
+          button.classList.remove("border-brand", "bg-brand-soft");
+        }, 1500);
+      });
+    });
+
+    // Thin scroll-progress bar.
+    var bar = document.querySelector("[data-progress]");
+    if (bar) {
+      bar.hidden = false;
+      var update = function () {
+        var doc = document.documentElement;
+        var max = doc.scrollHeight - doc.clientHeight;
+        bar.style.transform = "scaleX(" + (max > 0 ? doc.scrollTop / max : 0) + ")";
+      };
+      document.addEventListener("scroll", update, { passive: true });
+      update();
+    }
+  })();
+</script>

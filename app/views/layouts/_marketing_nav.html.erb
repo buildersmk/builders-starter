@@ -4,6 +4,9 @@
       builders<span class="text-brand">.</span>starter
     <% end %>
     <nav class="flex items-center gap-2">
+      <% if Rails.env.development? %>
+        <%= link_to "Starter Guide", guide_path, class: "px-3 text-sm font-semibold text-brand hover:underline" %>
+      <% end %>
       <%= link_to "Pricing", pricing_path, class: "hidden px-3 text-sm font-medium text-muted hover:text-ink sm:inline" %>
       <% if authenticated? %>
         <%= link_to "Dashboard", dashboard_path, class: "btn btn-primary btn-sm" %>

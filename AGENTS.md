@@ -8,9 +8,10 @@ add your product, ship. Read this first; read [STYLE.md](STYLE.md) before writin
 
 - **Rails 8.1** on **Ruby 3.4** · **Hotwire** (Turbo + Stimulus) · **importmap + Propshaft** (no node build)
 - **Tailwind v4** via `tailwindcss-rails` (design tokens in `app/assets/tailwind/application.css`)
-- **PostgreSQL** · **Solid Queue / Cache / Cable** — all in the one primary database (nothing extra to provision)
+- **SQLite** in development & test (a file on disk — nothing to install), **PostgreSQL** in production
+- **Solid Queue / Cache / Cable** — all in the one primary database (nothing extra to provision)
 - **Kamal** → any Docker host · **Minitest** + fixtures + Capybara system tests
-- Prod DB target: **Supabase** (the production `database.yml` is pooler-ready)
+- Prod DB target: **Supabase** (the production `database.yml` is pooler-ready); `pg` is a `:production`-group gem
 
 ## 2. Core model — Account / Identity / User / Session
 
@@ -30,12 +31,15 @@ visitor become the owner, then closes signups (others join by invite — build t
 **Auth.** Passwordless 6-digit codes (no passwords, no OAuth). `app/controllers/concerns/authentication.rb`
 + `session_codes` (email → code), `sessions` (verify → session), `registrations` (sign up). Codes are
 bcrypt-hashed, expire in 15 min, throttle resends, and lock after 5 tries. In development the code is
-logged and emails open in the browser (letter_opener).
+**shown right on the sign-in page** (and logged, and emails open via letter_opener), so there's nothing
+to hunt for. The first visitor to sign up becomes the owner.
 
 ## 3. Integrations — idle until keyed
 
 Each no-ops (or self-serves, in dev) until its ENV key is set. See `.env.example` for every key +
-where to get it. `bin/setup` walks you through Doppler (recommended) or a local `.env`.
+where to get it. `bin/setup` leads with a local `.env` (default); Doppler is an explicit opt-in
+(`doppler run -- bin/dev`). The catalog of integrations + where-to-get-each-key is also in
+`app/models/starter_guide.rb`, surfaced to the founder on the dev-only Starter Guide (see §7).
 
 | What | Where | Key |
 |---|---|---|
@@ -58,14 +62,15 @@ account to Pro so the flow is walkable in dev. One subscription product, resolve
 ## 5. Running it
 
 ```bash
-bin/setup          # deps, choose Doppler or .env, prepare the database
-bin/dev            # Puma + Tailwind watcher on http://localhost:3100 (auto-uses Doppler if set up)
-bin/rails test     # Minitest
+bin/setup          # deps, set up .env (or Doppler), prepare the SQLite dev database
+bin/dev            # Puma + Tailwind watcher on http://localhost:3100
+bin/rails test     # Minitest (SQLite; add PARALLEL_WORKERS=1 if pg/sqlite forking misbehaves)
 bin/rubocop        # omakase style
 ```
 
-With Doppler: `doppler run -- bin/dev` and `doppler run -- claude` (so the app *and* your AI agent get
-the keys). Local Postgres over the Unix socket needs no config; set `DATABASE_*` for Docker/remote.
+Development needs **no database to install** — SQLite lives under `storage/`. The `DATABASE_*` env
+vars are production-only (Postgres/Supabase). Prefer Doppler? Run through it explicitly:
+`doppler run -- bin/dev` and `doppler run -- claude` (so the app *and* your AI agent get the keys).
 
 ## 6. House rules (and see STYLE.md)
 
@@ -77,3 +82,18 @@ the keys). Local Postgres over the Unix socket needs no config; set `DATABASE_*`
 - Omakase style (`rubocop-rails-omakase`): double quotes, indented `private`, expanded conditionals.
 - Don't ship behavior without a covering test. Update `.env.example` when you add a key.
 - Keep integrations idle-until-keyed: read the key, no-op (or log a warning) when it's absent.
+
+## 7. Starter Guide (development only)
+
+Onboarding for the (often non-technical) founder who cloned this kit — it never ships to production.
+
+- **Welcome + checklist** — in development, `home#show` renders `home/welcome.html.erb` (a setup
+  checklist with live integration status) instead of the marketing page. The marketing page they'll
+  customize is at `/preview` (`home#marketing`) and is the production home.
+- **The guide** — `/guide` (`GuideController`, dev-only route + guard) renders a plain-language,
+  outcome-first how-to: what's inside, turning on each tool, "make it yours with Claude", going live.
+- **Single source of truth** — the integration catalog is `app/models/starter_guide.rb`; the agent-
+  readable mirror is **[GUIDE.md](GUIDE.md)** (exact env vars, commands, verify steps) and
+  **[PROMPTS.md](PROMPTS.md)** (the founder's copy-ready asks). Change them together when you add a tool.
+- Motion is CSS-first (`application.css`) with one small inline script (`guide/_behaviors.html.erb`);
+  everything degrades gracefully with no JS. Dev-only pages are gated on `Rails.env.development?`.

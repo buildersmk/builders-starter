@@ -70,11 +70,14 @@ module Authentication
       cookies.delete(:session_id)
     end
 
-    # Mint + email a 6-digit code. In development the code is also written to the log so you don't
-    # need a mail catcher.
+    # Mint + email a 6-digit code. In development the code is also written to the log AND surfaced
+    # on the next page (flash), so you can sign in without opening email or reading the terminal.
     def deliver_login_code(identity)
       code = identity.generate_login_code!
-      Rails.logger.info("[login-code] #{identity.email_address}: #{code}") if Rails.env.development?
+      if Rails.env.development?
+        Rails.logger.info("[login-code] #{identity.email_address}: #{code}")
+        flash[:dev_login_code] = code
+      end
       LoginCodeMailer.code(identity, code).deliver_later
     end
 end

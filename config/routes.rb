@@ -23,4 +23,12 @@ Rails.application.routes.draw do
 
   # --- Marketing home (public) ---
   root "home#show"
+
+  # --- Starter Guide (development only) ---
+  # The founder's onboarding: a welcome checklist (the home page in dev) and a rich how-to guide.
+  # None of this ships to production — your customers never see kit scaffolding.
+  if Rails.env.development?
+    get "guide",   to: "guide#show",      as: :guide     # the full how-to guide
+    get "preview", to: "home#marketing",  as: :marketing_preview  # see the marketing page you'll customize
+  end
 end

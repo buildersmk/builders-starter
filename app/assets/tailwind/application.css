@@ -44,4 +44,35 @@
   }
 
   .prose-lead { @apply text-lg leading-relaxed text-body; }
+
+  /* Status pills (live integration state on the guide / checklist) */
+  .pill { @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold; }
+  .pill-on { @apply bg-emerald-50 text-emerald-700; }
+  .pill-off { @apply bg-slate-100 text-muted; }
+
+  /* Copy-to-clipboard chips */
+  .copy { @apply inline-flex items-center gap-2 rounded-lg border border-line bg-white px-3 py-2 text-left font-mono text-sm text-ink transition hover:border-brand hover:bg-brand-soft; }
+}
+
+/* ---- Starter Guide motion — calm and instant, never busy (dev-only pages) --
+   Guarded by `.js`: if JavaScript doesn't run, nothing is hidden or animated. */
+@keyframes guide-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes guide-pop  { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+
+.lift { @apply transition duration-200 ease-out; }
+.lift:hover { @apply -translate-y-0.5 shadow-md; }
+
+/* Native collapsibles, no JS needed */
+details.step > summary { @apply cursor-pointer list-none; }
+details.step > summary::-webkit-details-marker { display: none; }
+details.step > summary .chevron { @apply transition-transform duration-200; }
+details.step[open] > summary .chevron { @apply rotate-90; }
+
+/* Thin scroll-progress bar at the top of the guide */
+.guide-progress { @apply fixed inset-x-0 top-0 z-50 h-0.5 origin-left scale-x-0 bg-brand; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal { opacity: 0; }
+  .js .reveal.is-in { animation: guide-rise .5s cubic-bezier(.2,.6,.2,1) both; }
+  .js .tick-in { animation: guide-pop .25s ease-out both; }
 }

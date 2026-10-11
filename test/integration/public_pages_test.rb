@@ -7,6 +7,20 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "h1"
   end
 
+  test "home is the marketing page outside development" do
+    get root_path
+    assert_response :success
+    assert_match "first customer", response.body      # the marketing hero
+    assert_no_match(/Your setup/, response.body)      # not the dev-only welcome checklist
+  end
+
+  test "the Starter Guide and preview are development-only (not reachable elsewhere)" do
+    get "/guide"
+    assert_response :not_found
+    get "/preview"
+    assert_response :not_found
+  end
+
   test "pricing renders" do
     get pricing_path
     assert_response :success
