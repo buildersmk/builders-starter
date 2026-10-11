@@ -28,6 +28,8 @@ gem "bcrypt", "~> 3.1.7"
 gem "stripe", "~> 15.0"
 # Faraday — HTTP client for the Kit (ConvertKit) boundary
 gem "faraday", "~> 2.0"
+# Web Push (PWA notifications) with VAPID — self-hosted, no third party. Idle until keys are set.
+gem "web-push", "~> 3.0"
 # OpenRouter + Apify use the stdlib net/http (no gem). Resend uses ActionMailer SMTP (no gem).
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

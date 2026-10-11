@@ -4,7 +4,7 @@ A lean, production-shaped **Rails 8** starter for shipping a product fast — pa
 multi-tenant-ready accounts, subscription billing, transactional email, and a marketing funnel.
 Every integration is **wired but idle until you add its key**, so the app runs the moment you clone it.
 
-Rails 8.1 · Ruby 3.4 · Hotwire · Tailwind v4 · SQLite (dev) / PostgreSQL (prod) · Solid Queue/Cache/Cable · Kamal.
+Rails 8.1 · Ruby 3.4 · Hotwire · Tailwind v4 · installable PWA · SQLite (dev) / PostgreSQL (prod) · Solid Queue/Cache/Cable · Kamal.
 
 > **Prerequisites (one-time, per machine):** Ruby 3.4 and [Claude Code](https://claude.com/claude-code).
 > No database to install — development runs on SQLite. Once those are set up, every project is
@@ -17,9 +17,10 @@ bin/setup     # installs deps, sets up your .env, prepares the database
 bin/dev       # http://localhost:3100
 ```
 
-That's it — `bin/dev` works on a fresh clone with no keys at all. Sign in at `/session/new`: it
-emails a 6-digit code (in development the code is printed to the log and the email opens in your
-browser).
+That's it — `bin/dev` works on a fresh clone with no keys at all. Open it and you'll land on a
+**welcome checklist**; `/guide` is a short, visual how-to. Sign in at `/session/new`: it emails a
+6-digit code (in development the code is **shown right on the sign-in page**). The first person to
+sign up becomes the owner.
 
 ## Secrets
 
@@ -48,6 +49,8 @@ its key. See `.env.example` for the full list and where to get each one.
 | **Leads** | Kit (ConvertKit) — capture → subscribe + tag |
 | **AI** | OpenRouter client (any LLM) |
 | **Scraping** | Apify client (sync + async) |
+| **PWA** | Installable app — manifest, service worker, offline page, "Add to home screen" |
+| **Push** | Self-hosted web push (VAPID) — `bin/rails vapid:generate` |
 
 ## Commands
 
@@ -60,8 +63,9 @@ bin/rails "stripe:webhook[https://host]"    # create the webhook, print its sign
 
 ## Deploy
 
-Kamal (`config/deploy.yml`) → any Docker host; the production database config is Supabase-pooler-ready.
-Fill in the host/domain/registry and run `kamal setup`.
+Kamal (`config/deploy.yml`) → any Docker host. In production your **business data** is PostgreSQL
+(Supabase-pooler-ready); **jobs, cache and cable** run on SQLite files on a persisted disk volume
+(fast, and no remote-DB polling bill). Fill in the host/domain/registry and run `kamal setup`.
 
 ## Conventions
 

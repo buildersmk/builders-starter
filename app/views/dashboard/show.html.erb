@@ -1,9 +1,14 @@
 <% content_for :title, "Dashboard" %>
 <% content_for :page_title, "Dashboard" %>
 
-<div class="mb-7">
-  <h2 class="text-2xl font-bold text-ink">Welcome<%= ", #{Current.user.name.split.first}" if Current.user&.name.present? %>.</h2>
-  <p class="mt-1 text-muted">This is your app. Everything from here is yours to shape.</p>
+<div class="mb-7 flex items-start justify-between gap-4">
+  <div>
+    <h2 class="text-2xl font-bold text-ink">Welcome<%= ", #{Current.user.name.split.first}" if Current.user&.name.present? %>.</h2>
+    <p class="mt-1 text-muted">This is your app. Everything from here is yours to shape.</p>
+  </div>
+  <button type="button" data-install-target="button" data-action="install#install" class="btn btn-outline btn-sm hidden shrink-0">
+    <span aria-hidden="true">⬇</span> Install app
+  </button>
 </div>
 
 <div class="grid gap-5 sm:grid-cols-2">

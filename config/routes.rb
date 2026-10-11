@@ -15,6 +15,14 @@ Rails.application.routes.draw do
   # --- Marketing lead capture (Kit — idle until keyed) ---
   resource :lead, only: :create
 
+  # --- Installable PWA (manifest, service worker, offline fallback — all server-rendered) ---
+  resource :manifest, only: :show, controller: "pwa/manifests", defaults: { format: :json }
+  get "service-worker.js", to: "pwa/service_workers#show", as: :pwa_service_worker
+  resource :offline, only: :show, controller: "pwa/offlines"
+
+  # --- Web push (idle until VAPID keys are set) ---
+  resource :push_subscription, only: :create
+
   # --- App (authenticated) ---
   get "dashboard", to: "dashboard#show", as: :dashboard
 

@@ -1,11 +1,15 @@
 # Development & test run on SQLite — a plain file on disk, bundled with Rails. Nothing to install,
-# nothing to start: clone the repo and `bin/dev` just works. The Solid Cache / Queue / Cable tables
-# live in this same database (see db/migrate/*_create_solid_stack_tables.rb).
+# nothing to start: clone the repo and `bin/dev` just works. Jobs run in-process in development.
 #
-# Production runs on PostgreSQL (a fresh Supabase, or any one Postgres, is all you need). It's tuned
-# for the Supabase transaction pooler (PgBouncer, port 6543): prepared_statements off, SSL required,
-# and the search_path pinned via a connection variable (never a runtime SET, which the pooler rejects).
-# Point it with the discrete DATABASE_* vars (in Doppler or .env) on the server.
+# Production splits the database in two, on purpose:
+#   • primary — PostgreSQL (a fresh Supabase, or any one Postgres). Your BUSINESS data lives here.
+#     Tuned for the Supabase transaction pooler: prepared_statements off, SSL required, search_path
+#     pinned via a connection variable (never a runtime SET, which the pooler rejects).
+#   • queue / cache / cable — SQLite files on the server's own disk volume. This is the PLUMBING:
+#     Solid Queue polls forever (no LISTEN/NOTIFY), and against a remote pooled Postgres every poll
+#     is a billed, chatty round-trip. So the three throwaway stores live on local SQLite instead —
+#     fast, free, and rebuildable. "The database carries the business; the disk carries the plumbing."
+#     `timeout` makes a writer wait rather than raise during a Kamal deploy's brief old+new overlap.
 
 default: &default
   adapter: sqlite3
@@ -36,3 +40,18 @@ production:
     schema_search_path: public
     variables:
       search_path: public
+  queue:
+    adapter: sqlite3
+    database: storage/production_queue.sqlite3
+    migrations_paths: db/queue_migrate
+    timeout: 5000
+  cache:
+    adapter: sqlite3
+    database: storage/production_cache.sqlite3
+    migrations_paths: db/cache_migrate
+    timeout: 5000
+  cable:
+    adapter: sqlite3
+    database: storage/production_cable.sqlite3
+    migrations_paths: db/cable_migrate
+    timeout: 5000

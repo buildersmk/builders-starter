@@ -6,12 +6,17 @@ add your product, ship. Read this first; read [STYLE.md](STYLE.md) before writin
 
 ## 1. Stack
 
-- **Rails 8.1** on **Ruby 3.4** · **Hotwire** (Turbo + Stimulus) · **importmap + Propshaft** (no node build)
+- **Rails 8.1** on **Ruby 3.4** · **Hotwire** (Turbo + Stimulus, wired via importmap) · **Propshaft** (no node build)
 - **Tailwind v4** via `tailwindcss-rails` (design tokens in `app/assets/tailwind/application.css`)
-- **SQLite** in development & test (a file on disk — nothing to install), **PostgreSQL** in production
-- **Solid Queue / Cache / Cable** — all in the one primary database (nothing extra to provision)
+- **Installable PWA** — server-rendered manifest + service worker + offline page + web push (§4)
 - **Kamal** → any Docker host · **Minitest** + fixtures + Capybara system tests
-- Prod DB target: **Supabase** (the production `database.yml` is pooler-ready); `pg` is a `:production`-group gem
+
+**Database (§ the "two-database" split).** Development & test run on **SQLite** (a file on disk,
+nothing to install; jobs run in-process). Production splits in two: **primary = PostgreSQL**
+(Supabase-pooler-ready) for business data, and **Solid Queue/Cache/Cable = their own SQLite files**
+on the Kamal volume — "the database carries the business; the disk carries the plumbing" (keeps the
+remote DB clean and un-billed by Solid Queue's polling). See `config/database.yml`. `pg` is a
+`:production`-group gem (not installed locally).
 
 ## 2. Core model — Account / Identity / User / Session
 
@@ -48,6 +53,7 @@ where to get it. `bin/setup` leads with a local `.env` (default); Doppler is an 
 | **Kit** — lead capture → subscribe + tag | `app/services/kit_tagger.rb`, `leads_controller.rb` | `KIT_API_KEY` |
 | **OpenRouter** — one client for any LLM | `app/services/open_router_client.rb` | `OPENROUTER_API_KEY` |
 | **Apify** — scraping actors (sync/async) | `app/services/apify_client.rb` | `APIFY_API_TOKEN` |
+| **Web Push** — self-hosted VAPID notifications | `app/models/push.rb`, `push_subscription.rb`, `push_controller.js` | `VAPID_PUBLIC_KEY` + `VAPID_PRIVATE_KEY` (`bin/rails vapid:generate`) |
 
 Billing is **account-level** (the tenant subscribes). With no Stripe key, checkout "self-serves" the
 account to Pro so the flow is walkable in dev. One subscription product, resolved by a stable price
@@ -56,8 +62,13 @@ account to Pro so the flow is walkable in dev. One subscription product, resolve
 ## 4. Surfaces
 
 - **Marketing** (`layout "marketing"`, public): `home#show` (hero + funnel + lead capture), `pricing#show`.
-- **App** (`layout "application"`, authenticated): `dashboard#show`.
+- **App** (`layout "application"`, authenticated): `dashboard#show` — classic sidebar + top bar shell.
 - **Auth** (`layout "auth"`): `sessions#new`, `registrations#new`.
+- **PWA** (server-rendered, app-wide): `pwa/manifests#show` (`/manifest`), `pwa/service_workers#show`
+  (`/service-worker.js`, app-shell: network-first pages, cache-first assets, offline fallback, cache
+  busted by the CSS digest), `pwa/offlines#show`. `install_controller.js` registers the worker on
+  every page (mounted on `<body>`) and powers the "Install app" button; `push_controller.js` opts into
+  web push; `PushSubscriptionsController` stores subscriptions.
 
 ## 5. Running it
 
@@ -90,10 +101,10 @@ Onboarding for the (often non-technical) founder who cloned this kit — it neve
 - **Welcome + checklist** — in development, `home#show` renders `home/welcome.html.erb` (a setup
   checklist with live integration status) instead of the marketing page. The marketing page they'll
   customize is at `/preview` (`home#marketing`) and is the production home.
-- **The guide** — `/guide` (`GuideController`, dev-only route + guard) renders a plain-language,
-  outcome-first how-to: what's inside, turning on each tool, "make it yours with Claude", going live.
-- **Single source of truth** — the integration catalog is `app/models/starter_guide.rb`; the agent-
-  readable mirror is **[GUIDE.md](GUIDE.md)** (exact env vars, commands, verify steps) and
-  **[PROMPTS.md](PROMPTS.md)** (the founder's copy-ready asks). Change them together when you add a tool.
-- Motion is CSS-first (`application.css`) with one small inline script (`guide/_behaviors.html.erb`);
-  everything degrades gracefully with no JS. Dev-only pages are gated on `Rails.env.development?`.
+- **The guide** — `/guide` (`GuideController`, dev-only route + guard): a short, visual, icon-driven
+  page — what's inside, and the three steps to open the folder in Claude Code and start asking. No
+  terminal commands by design.
+- **Single source of truth** — the integration catalog is `app/models/starter_guide.rb` (name, key,
+  where-to-get-it, live status); it drives both the welcome checklist and the guide. Add a tool there.
+- Motion is CSS-first (`application.css`) + the small `guide/_behaviors.html.erb` script; degrades
+  gracefully with no JS. Dev-only pages are gated on `Rails.env.development?`.

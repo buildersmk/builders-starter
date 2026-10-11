@@ -46,12 +46,12 @@ Rails.application.configure do
   # Don't log any deprecations.
   config.active_support.report_deprecations = false
 
-  # Replace the default in-process memory cache store with a durable alternative.
+  # The "plumbing" — jobs, cache and cable — lives in its own SQLite files on the server's disk
+  # volume, NOT in the primary (Postgres) database. Keeps business data clean and avoids billing
+  # a remote DB for Solid Queue's constant polling. (See config/database.yml for the why.)
   config.cache_store = :solid_cache_store
-
-  # Replace the default in-process and non-durable queuing backend for Active Job.
-  # Solid Queue runs in the primary database (single-database setup), so no connects_to.
   config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.

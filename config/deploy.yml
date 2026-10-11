@@ -28,6 +28,8 @@ env:
     - KIT_API_KEY
     - OPENROUTER_API_KEY
     - APIFY_API_TOKEN
+    - VAPID_PUBLIC_KEY
+    - VAPID_PRIVATE_KEY
   clear:
     APP_HOST: https://app.example.com
     APP_HOST_NAME: app.example.com
@@ -42,6 +44,7 @@ env:
     OPENROUTER_MODEL: openai/gpt-4o-mini
     SOLID_QUEUE_IN_PUMA: "true"
     WEB_CONCURRENCY: "2"
+    VAPID_SUBJECT: mailto:you@example.com
 
 aliases:
   console: app exec --interactive --reuse "bin/rails console"
@@ -50,6 +53,12 @@ aliases:
   dbc: app exec --interactive --reuse "bin/rails dbconsole"
 
 asset_path: /rails/public/assets
+
+# Persist the server's disk across deploys. The Solid Queue/Cache/Cable SQLite files (the "plumbing"
+# — see config/database.yml) and Active Storage uploads live here; without this they'd reset every
+# deploy.
+volumes:
+  - "builders_starter_storage:/rails/storage"
 
 builder:
   arch: amd64

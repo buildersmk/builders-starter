@@ -12,5 +12,6 @@ test:
   <<: *default
 
 production:
-  # Single-database setup: the cache tables live in the primary database.
+  # Solid Cache lives in its own SQLite file (the `cache` connection in database.yml).
+  database: cache
   <<: *default

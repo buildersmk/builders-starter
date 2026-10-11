@@ -1,0 +1,75 @@
+// Service worker. Strategy: app-shell only — network-first for page navigations (so data is never
+// stale), cache-first for digested assets, and an offline fallback page. The cache name is keyed to
+// the stylesheet digest, so every deploy invalidates the old shell automatically. Also handles web
+// push + notification clicks.
+const CACHE = "starter-shell-<%= asset_path("tailwind.css").split("/").last %>";
+const SHELL = [
+  "<%= asset_path("tailwind.css") %>",
+  "/icon.svg",
+  "<%= offline_path %>"
+];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys()
+      .then((names) => Promise.all(names.filter((name) => name !== CACHE).map((name) => caches.delete(name))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  if (request.method !== "GET") return;
+
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (request.mode === "navigate") {
+    // Pages: try the network, fall back to the offline page.
+    event.respondWith(fetch(request).catch(() => caches.match("<%= offline_path %>")));
+    return;
+  }
+
+  if (SHELL.includes(url.pathname) || url.pathname.startsWith("/assets/")) {
+    // Assets: serve from cache, filling it on first hit.
+    event.respondWith(
+      caches.match(request).then((hit) => hit || fetch(request).then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE).then((cache) => cache.put(request, copy));
+        return response;
+      }))
+    );
+  }
+});
+
+// --- Web push ---
+self.addEventListener("push", (event) => {
+  if (!event.data) return;
+  const payload = event.data.json();
+  event.waitUntil(self.registration.showNotification(payload.title, {
+    body: payload.body,
+    icon: "/icon.png",
+    badge: "/icon.png",
+    tag: payload.tag,
+    data: { path: payload.path }
+  }));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const path = event.notification.data?.path || "/";
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+      for (const client of clients) {
+        if (new URL(client.url).pathname === path && "focus" in client) return client.focus();
+      }
+      return self.clients.openWindow ? self.clients.openWindow(path) : undefined;
+    })
+  );
+});
