@@ -4,32 +4,38 @@ A lean, production-shaped **Rails 8** starter for shipping a product fast — pa
 multi-tenant-ready accounts, subscription billing, transactional email, and a marketing funnel.
 Every integration is **wired but idle until you add its key**, so the app runs the moment you clone it.
 
-Rails 8.1 · Ruby 3.4 · Hotwire · Tailwind v4 · PostgreSQL · Solid Queue/Cache/Cable · Kamal.
+Rails 8.1 · Ruby 3.4 · Hotwire · Tailwind v4 · SQLite (dev) / PostgreSQL (prod) · Solid Queue/Cache/Cable · Kamal.
+
+> **Prerequisites (one-time, per machine):** Ruby 3.4 and [Claude Code](https://claude.com/claude-code).
+> No database to install — development runs on SQLite. Once those are set up, every project is
+> `git clone` → `bin/setup` → `bin/dev`.
 
 ## Quick start
 
 ```bash
-bin/setup     # installs deps, lets you choose Doppler or a local .env, prepares the database
+bin/setup     # installs deps, sets up your .env, prepares the database
 bin/dev       # http://localhost:3100
 ```
 
-Sign in at `/session/new` — it emails a 6-digit code (in development the code is printed to the log
-and the email opens in your browser).
+That's it — `bin/dev` works on a fresh clone with no keys at all. Sign in at `/session/new`: it
+emails a 6-digit code (in development the code is printed to the log and the email opens in your
+browser).
 
-## Secrets: Doppler (recommended) or .env
+## Secrets
 
-Everything is optional. `bin/setup` walks you through two options:
+Every key is optional — the app boots without any, each integration just stays off until you add
+its key. See `.env.example` for the full list and where to get each one.
 
-- **Local `.env`** — simplest. Copy `.env.example` → `.env`, fill in what you need. Loaded automatically.
-- **Doppler** — no secrets on disk, syncs local → prod, and feeds your AI coding agent too:
+- **Local `.env`** (default) — copy `.env.example` → `.env`, fill in what you need. Loaded
+  automatically by `bin/dev`. Nothing to install.
+- **Doppler** (for teams) — no secrets on disk, syncs local → prod, and can feed your AI coding
+  agent too. Run the app *through* Doppler, explicitly:
 
   ```bash
+  doppler setup                 # one-time: link this repo to a Doppler project
   doppler run -- bin/dev        # the app gets your keys
   doppler run -- claude         # your agent gets them too
   ```
-
-See `.env.example` for every key and where to get it. Nothing set? The app still boots — each
-integration just stays off.
 
 ## What's inside
 

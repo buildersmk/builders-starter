@@ -1,35 +1,35 @@
-# One PostgreSQL database per environment. The Solid Cache / Queue / Cable tables live in this
-# same database (see db/migrate/*_create_solid_stack_tables.rb), so there's nothing extra to
-# provision — a fresh Supabase (or any one Postgres) is all you need.
+# Development & test run on SQLite — a plain file on disk, bundled with Rails. Nothing to install,
+# nothing to start: clone the repo and `bin/dev` just works. The Solid Cache / Queue / Cable tables
+# live in this same database (see db/migrate/*_create_solid_stack_tables.rb).
 #
-# Local dev reads discrete DATABASE_* vars (or falls back to a localhost database). Production is
-# tuned for the Supabase transaction pooler (PgBouncer, port 6543): prepared_statements must be
-# off, SSL required, and the search_path is pinned via a connection variable (never a runtime SET,
-# which the pooler rejects).
-# Shared knobs. host/username/password come from the environment; when unset locally they're blank,
-# so the pg driver connects over the Unix socket as your OS user (the zero-config macOS/brew default).
-# Set DATABASE_* (in .env or Doppler) to point at Docker Postgres or a remote database.
+# Production runs on PostgreSQL (a fresh Supabase, or any one Postgres, is all you need). It's tuned
+# for the Supabase transaction pooler (PgBouncer, port 6543): prepared_statements off, SSL required,
+# and the search_path pinned via a connection variable (never a runtime SET, which the pooler rejects).
+# Point it with the discrete DATABASE_* vars (in Doppler or .env) on the server.
+
 default: &default
-  adapter: postgresql
-  encoding: unicode
+  adapter: sqlite3
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  host: <%= ENV["DATABASE_HOST"] %>
-  port: <%= ENV["DATABASE_PORT"] %>
-  username: <%= ENV["DATABASE_USERNAME"] %>
-  password: <%= ENV["DATABASE_PASSWORD"] %>
+  timeout: 5000
 
 development:
   <<: *default
-  database: <%= ENV.fetch("DATABASE_NAME", "builders_starter_development") %>
+  database: storage/development.sqlite3
 
 test:
   <<: *default
-  database: <%= ENV.fetch("TEST_DATABASE_NAME", "builders_starter_test") %>
+  database: storage/test.sqlite3
 
 production:
   primary:
-    <<: *default
+    adapter: postgresql
+    encoding: unicode
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    host: <%= ENV["DATABASE_HOST"] %>
+    port: <%= ENV["DATABASE_PORT"] %>
     database: <%= ENV.fetch("DATABASE_NAME", "postgres") %>
+    username: <%= ENV["DATABASE_USERNAME"] %>
+    password: <%= ENV["DATABASE_PASSWORD"] %>
     sslmode: <%= ENV.fetch("DATABASE_SSLMODE", "require") %>
     # --- Supabase transaction-pooler safety (harmless on a direct connection) ---
     prepared_statements: false

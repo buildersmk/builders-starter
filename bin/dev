@@ -12,13 +12,6 @@ export PORT="${PORT:-3100}"
 export RUBY_DEBUG_OPEN="true"
 export RUBY_DEBUG_LAZY="true"
 
-# If Doppler is set up for this directory and we're not already inside a `doppler run`,
-# start through it so the dev server gets your secrets. Otherwise dotenv loads .env.
-# Set BUILDERS_NO_DOPPLER=1 to always skip.
-if [ -z "$DOPPLER_PROJECT" ] && [ -z "$BUILDERS_NO_DOPPLER" ] && \
-   command -v doppler >/dev/null 2>&1 && doppler configure get config --plain >/dev/null 2>&1; then
-  echo "→ Starting through Doppler (doppler run)…"
-  exec doppler run -- foreman start -f Procfile.dev "$@"
-fi
-
+# Secrets come from your local .env (loaded automatically by dotenv) — no setup required.
+# Prefer Doppler? Run the app through it explicitly:  doppler run -- bin/dev
 exec foreman start -f Procfile.dev "$@"

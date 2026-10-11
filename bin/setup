@@ -29,14 +29,16 @@ end
 
 FileUtils.chdir APP_ROOT do
   puts "== Installing dependencies =="
+  # Skip the production-only group locally (the pg gem needs libpq; you don't need it to develop).
+  system! "bundle config set --local without production"
   system("bundle check") || system!("bundle install")
 
   puts "\n== Secrets =="
-  puts "How do you want to manage API keys?"
-  puts "  1) Local .env file  — simplest, zero signup"
-  puts "  2) Doppler          — recommended: no secrets on disk, syncs to prod, feeds your AI agent"
+  puts "How do you want to manage API keys? (all keys are optional — the app runs without any)"
+  puts "  1) Local .env file  — simplest, nothing to install  [default]"
+  puts "  2) Doppler          — for teams: no secrets on disk, syncs to prod, feeds your AI agent"
   puts "  3) Skip for now"
-  choice = ask("Choose [1/2/3]: ")
+  choice = ask("Choose [1/2/3] (Enter = 1): ")
 
   case choice
   when "2", "doppler"

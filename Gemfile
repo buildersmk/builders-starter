@@ -4,8 +4,9 @@ source "https://rubygems.org"
 gem "rails", "~> 8.1.4"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
-# Use postgresql as the database for Active Record
-gem "pg", "~> 1.1"
+# Database: SQLite in development & test — a file on disk, nothing to install or run.
+# Production uses PostgreSQL (see the :production group below and config/database.yml).
+gem "sqlite3", ">= 2.1"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
@@ -81,4 +82,10 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+end
+
+group :production do
+  # PostgreSQL in production only (compiles against libpq, which you don't need locally).
+  # `bin/setup` configures bundler to skip this group on your machine; the deploy image installs it.
+  gem "pg", "~> 1.1"
 end
