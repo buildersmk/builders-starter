@@ -2,10 +2,32 @@
 <html lang="en" class="h-full">
   <head><%= render "layouts/head" %></head>
   <body class="min-h-full bg-canvas font-sans text-body antialiased">
-    <%= render "layouts/app_nav" %>
-    <main class="mx-auto max-w-5xl px-5 py-10">
-      <%= render "layouts/flash" %>
-      <%= yield %>
-    </main>
+    <div class="flex min-h-screen">
+      <%= render "layouts/app_sidebar" %>
+      <div class="flex min-w-0 flex-1 flex-col">
+        <%= render "layouts/app_topbar" %>
+        <main class="flex-1 px-5 py-8 sm:px-8">
+          <div class="mx-auto max-w-5xl">
+            <%= render "layouts/flash" %>
+            <%= yield %>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var sidebar = document.getElementById("app-sidebar");
+        var backdrop = document.getElementById("app-sidebar-backdrop");
+        var openBtn = document.getElementById("app-nav-open");
+        if (!sidebar || !backdrop || !openBtn) return;
+
+        var open = function () { sidebar.classList.remove("-translate-x-full"); backdrop.classList.remove("hidden"); };
+        var close = function () { sidebar.classList.add("-translate-x-full"); backdrop.classList.add("hidden"); };
+
+        openBtn.addEventListener("click", open);
+        backdrop.addEventListener("click", close);
+      })();
+    </script>
   </body>
 </html>

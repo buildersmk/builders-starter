@@ -1,149 +1,99 @@
 <% content_for :title, "Starter Guide" %>
 
 <%# ─────────────────────────── Hero ─────────────────────────── %>
-<section class="mx-auto max-w-3xl px-5 pt-16 pb-10 text-center sm:pt-20">
-  <span class="badge mb-5 reveal">Starter Guide</span>
-  <h1 class="reveal text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
-    Everything you need, in plain words.
-  </h1>
-  <p class="prose-lead reveal mx-auto mt-5 max-w-xl">
-    You don't need to be technical. This kit is already built and running — your job is to make it
-    <em>yours</em>. The trick: you don't edit code, you <strong class="text-ink">ask Claude</strong>, and it does the work.
+<section class="mx-auto max-w-3xl px-5 pt-16 pb-8 text-center sm:pt-20">
+  <span class="badge mb-5 reveal">Your starter kit</span>
+  <h1 class="reveal text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">A real app, ready to make yours.</h1>
+  <p class="prose-lead reveal mx-auto mt-5 max-w-lg">
+    You don't write code. You open this project in <strong class="text-ink">Claude Code</strong> and ask —
+    it builds, you look.
   </p>
-  <div class="reveal mt-7">
-    <%= link_to "← Back to your checklist", root_path, class: "text-sm font-semibold text-brand hover:underline" %>
-  </div>
 </section>
 
-<%# ─────────────────────── What you've got ─────────────────────── %>
+<%# ─────────────────────── What's inside (icons) ─────────────────────── %>
 <section class="mx-auto max-w-4xl px-5 py-8">
-  <h2 class="reveal text-2xl font-bold text-ink">What you've got</h2>
-  <p class="reveal mt-1 text-body">A real product skeleton — the plumbing most founders spend weeks on is already done.</p>
-  <div class="mt-6 grid gap-4 sm:grid-cols-2">
-    <% [
-         ["Sign-in that just works", "People log in with a 6-digit code sent to their email — no passwords to manage, nothing to reset."],
-         ["A way to charge money", "Subscriptions, a checkout page and a billing portal where customers manage their own plan."],
-         ["Email that arrives", "Welcome notes, receipts and login codes land in the inbox, not the spam folder."],
-         ["A marketing page + list", "A landing page and an email-signup box so interested people can follow along."]
-       ].each do |title, body| %>
-      <div class="card lift reveal">
-        <h3 class="font-bold text-ink"><%= title %></h3>
-        <p class="mt-1.5 text-sm text-body"><%= body %></p>
+  <h2 class="reveal text-center text-sm font-semibold uppercase tracking-wide text-muted">What's already inside</h2>
+
+  <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+    <%
+      key_icon   = '<path d="M15.75 1.5a6.75 6.75 0 0 0-6.63 7.96L2.1 16.49A2.25 2.25 0 0 0 1.5 18v3.75c0 .41.34.75.75.75H6a.75.75 0 0 0 .75-.75v-1.5h1.5a.75.75 0 0 0 .75-.75v-1.5h1.5a.75.75 0 0 0 .53-.22l1.52-1.52a6.75 6.75 0 1 0 3.2-12.76Zm1.5 5.25a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>'.html_safe
+      grid_icon  = '<path d="M3 3h7v7H3V3Zm0 11h7v7H3v-7ZM14 3h7v7h-7V3Zm0 11h7v7h-7v-7Z"/>'.html_safe
+      builtins = [["Login that works", "6-digit code sent by email — no passwords.", key_icon],
+                  ["Accounts & dashboard", "Workspaces, roles and this home screen.", grid_icon]]
+    %>
+    <% builtins.each do |title, line, icon| %>
+      <div class="card lift reveal flex flex-col items-center gap-3 text-center">
+        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-soft">
+          <svg class="h-5 w-5 text-brand" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><%= icon %></svg>
+        </span>
+        <div>
+          <p class="text-sm font-semibold text-ink"><%= title %></p>
+          <p class="mt-0.5 text-xs text-muted"><%= line %></p>
+        </div>
       </div>
     <% end %>
-  </div>
-</section>
 
-<%# ──────────────────── Run it on your computer ──────────────────── %>
-<section class="mx-auto max-w-4xl px-5 py-8">
-  <h2 class="reveal text-2xl font-bold text-ink">Run it on your computer</h2>
-  <p class="reveal mt-1 text-body">You've already done this — but here it is for next time. Two commands, then it's live at <code class="rounded bg-canvas px-1.5 py-0.5 text-sm">localhost:3100</code>.</p>
-  <div class="mt-5 flex flex-col gap-2 sm:flex-row reveal">
-    <button type="button" class="copy flex-1" data-copy="bin/setup"><code data-copy-label>bin/setup</code><span class="ml-auto text-xs text-muted">copy</span></button>
-    <button type="button" class="copy flex-1" data-copy="bin/dev"><code data-copy-label>bin/dev</code><span class="ml-auto text-xs text-muted">copy</span></button>
-  </div>
-  <p class="reveal mt-3 text-sm text-muted">Stuck? Paste the red error into Claude and say “this broke when I ran the app — fix it.”</p>
-</section>
-
-<%# ───────────────────────── Turn on your tools ───────────────────────── %>
-<section id="tools" class="mx-auto max-w-4xl scroll-mt-20 px-5 py-8">
-  <h2 class="reveal text-2xl font-bold text-ink">Turn on your tools</h2>
-  <p class="reveal mt-1 max-w-2xl text-body">
-    Each tool below is already wired in — it just sleeps until you give it a <strong class="text-ink">key</strong>.
-    A key is like a password that lets your app use another company's service. Start with the two
-    essentials; the rest are there when you need them.
-  </p>
-
-  <h3 class="reveal mt-7 text-sm font-semibold uppercase tracking-wide text-muted">Start here</h3>
-  <div class="mt-3 space-y-4">
-    <% StarterGuide.essential.each do |integration| %>
-      <%= render "guide/integration", integration: integration %>
-    <% end %>
-  </div>
-
-  <h3 class="reveal mt-8 text-sm font-semibold uppercase tracking-wide text-muted">When you need them</h3>
-  <div class="mt-3 space-y-4">
-    <% StarterGuide.optional.each do |integration| %>
-      <%= render "guide/integration", integration: integration %>
-    <% end %>
-  </div>
-</section>
-
-<%# ─────────────────── Make it yours — ask Claude ─────────────────── %>
-<section id="make-it-yours" class="mx-auto max-w-4xl scroll-mt-20 px-5 py-8">
-  <h2 class="reveal text-2xl font-bold text-ink">Make it yours — just ask Claude</h2>
-  <p class="reveal mt-1 max-w-2xl text-body">
-    This is the part that feels like magic. You don't open code — you open Claude, describe the change
-    in normal words, and refresh the page to see it. Copy any of these to try it:
-  </p>
-
-  <div class="mt-6 grid gap-4 sm:grid-cols-2">
-    <% [
-         ["Change your words", "Change the homepage headline to “Bookkeeping for busy cafés” and the subtitle to match."],
-         ["Change the look", "Make the main colour a warm orange instead of indigo, across the whole app."],
-         ["Add a page", "Add a simple “Contact” page with a name, email and message form that emails me."],
-         ["Rename things", "Rename “workspace” to “studio” everywhere a customer can see it."]
-       ].each do |label, prompt| %>
-      <div class="card reveal">
-        <p class="text-xs font-semibold uppercase tracking-wide text-muted"><%= label %></p>
-        <p class="mt-2 text-sm text-body">“<%= prompt %>”</p>
-        <button type="button" class="copy mt-3 w-full" data-copy="<%= prompt %>">
-          <span data-copy-label>Copy for Claude</span><span class="ml-auto text-xs text-muted">⌘</span>
-        </button>
+    <% StarterGuide.integrations.each do |tool| %>
+      <div class="card lift reveal flex flex-col items-center gap-3 text-center">
+        <span class="relative flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-white">
+          <%= image_tag tool.logo, alt: tool.name, class: "h-6 w-6", loading: "lazy" %>
+          <% if tool.configured? %>
+            <span class="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" title="Connected"></span>
+          <% end %>
+        </span>
+        <div>
+          <p class="text-sm font-semibold text-ink"><%= tool.name %></p>
+          <p class="mt-0.5 text-xs text-muted"><%= tool.tagline.split(" — ").first %></p>
+        </div>
       </div>
     <% end %>
   </div>
 
-  <div class="mt-5 rounded-xl border border-dashed border-line bg-canvas p-4 reveal">
-    <p class="text-sm text-body"><span class="font-semibold text-ink">Golden rule:</span> if you're not sure how to do something, describe what you <em>want</em> to happen and let Claude figure out the how. “When someone signs up, send them a welcome email” is a perfect instruction.</p>
-  </div>
-</section>
-
-<%# ───────────────────────────── Go live ───────────────────────────── %>
-<section id="go-live" class="mx-auto max-w-4xl scroll-mt-20 px-5 py-8 pb-16">
-  <h2 class="reveal text-2xl font-bold text-ink">Go live</h2>
-  <p class="reveal mt-1 max-w-2xl text-body">
-    Going live means flipping from your private practice version to the real one customers can pay on.
-    When you're ready, tell Claude “help me deploy this” — and here's what that involves:
+  <p class="reveal mt-5 text-center text-xs text-muted">
+    The green dot means it's connected. Want to switch one on? Just ask Claude — it knows where each key goes.
   </p>
-  <ol class="mt-5 space-y-3 reveal">
-    <% [
-         ["Swap test keys for real ones", "In each tool (Stripe, Resend…), grab the “live” key instead of the “test” one. Same boxes in your settings — real values."],
-         ["Point your domain at it", "Buy a domain (or use one you own) and connect it, so customers visit yourname.com, not localhost."],
-         ["Ship it", "One deploy command puts it on the internet. Claude runs it with you."]
-       ].each_with_index do |(title, body), index| %>
-      <li class="flex gap-4">
-        <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white"><%= index + 1 %></span>
-        <div><p class="font-semibold text-ink"><%= title %></p><p class="mt-0.5 text-sm text-body"><%= body %></p></div>
-      </li>
-    <% end %>
-  </ol>
-
-  <details class="step mt-6 rounded-xl border border-line bg-white reveal">
-    <summary class="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-ink">
-      <svg class="chevron h-4 w-4 text-muted" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.3 5.3a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-4 4a1 1 0 1 1-1.4-1.4L10.6 10 7.3 6.7a1 1 0 0 1 0-1.4Z" clip-rule="evenodd"/></svg>
-      Pre-launch checklist
-    </summary>
-    <ul class="list-disc space-y-2 border-t border-line px-8 py-4 text-sm text-body">
-      <li>Every tool you use shows a real “live” key, not a test one.</li>
-      <li>A test payment with a real card goes through and you see the money in Stripe.</li>
-      <li>You received a real welcome email at your own address.</li>
-      <li>Your domain loads the site over <code class="rounded bg-canvas px-1.5 py-0.5 text-xs">https://</code>.</li>
-    </ul>
-  </details>
 </section>
 
-<%# ───────────────────────── For your AI agent ───────────────────────── %>
-<section class="mx-auto max-w-4xl px-5 pb-20">
-  <div class="rounded-2xl bg-ink px-6 py-8 text-white reveal">
-    <h2 class="text-xl font-bold">Working with Claude? It has its own copy of this guide.</h2>
-    <p class="mt-2 max-w-2xl text-sm text-slate-300">
-      The same steps — written as exact instructions for a coding agent — live in
-      <code class="rounded bg-white/10 px-1.5 py-0.5">GUIDE.md</code>,
-      <code class="rounded bg-white/10 px-1.5 py-0.5">AGENTS.md</code> and
-      <code class="rounded bg-white/10 px-1.5 py-0.5">PROMPTS.md</code> in your project. Claude reads them automatically, so you and your agent are always on the same page.
-    </p>
+<%# ─────────────────────── How to build it (3 steps) ─────────────────────── %>
+<section class="mx-auto max-w-4xl px-5 py-10">
+  <h2 class="reveal text-center text-2xl font-bold text-ink">How to build it</h2>
+  <p class="reveal mx-auto mt-2 max-w-md text-center text-body">Three steps. No terminal, no setup, no code.</p>
+
+  <div class="mt-8 grid gap-5 sm:grid-cols-3">
+    <%
+      dl_icon   = '<path d="M12 3a.75.75 0 0 1 .75.75v9.44l3.22-3.22a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.22 3.22V3.75A.75.75 0 0 1 12 3ZM4.5 19.5a.75.75 0 0 1 .75-.75h13.5a.75.75 0 0 1 0 1.5H5.25a.75.75 0 0 1-.75-.75Z"/>'.html_safe
+      fldr_icon = '<path d="M2.25 6A2.25 2.25 0 0 1 4.5 3.75h4.19c.6 0 1.17.24 1.59.66l1.06 1.06c.14.14.33.22.53.22h5.88A2.25 2.25 0 0 1 20 7.94H4.5A2.25 2.25 0 0 0 2.25 10.2V6Zm0 5.69A2.25 2.25 0 0 1 4.5 9.44h15A2.25 2.25 0 0 1 21.75 11.7v6.05A2.25 2.25 0 0 1 19.5 20H4.5a2.25 2.25 0 0 1-2.25-2.25v-6.06Z"/>'.html_safe
+      chat_icon = '<path d="M4.5 3.75A2.25 2.25 0 0 0 2.25 6v9A2.25 2.25 0 0 0 4.5 17.25h2.69l3.03 3.03a1.5 1.5 0 0 0 2.56-1.06v-1.97h4.72A2.25 2.25 0 0 0 19.75 15V6a2.25 2.25 0 0 0-2.25-2.25h-13Z"/>'.html_safe
+      steps = [
+        ["1", "Get the Claude Code app", "Download it once from code.claude.com and open it. Nothing else to install.", dl_icon],
+        ["2", "Open this folder", "In the app: the <strong class='text-ink'>Code</strong> tab → <strong class='text-ink'>Local</strong> → <strong class='text-ink'>Select folder</strong>, and choose this project.", fldr_icon],
+        ["3", "Just ask", "Type what you want in plain words. Claude makes the change; you refresh the page and look.", chat_icon]
+      ]
+    %>
+    <% steps.each do |num, title, body, icon| %>
+      <div class="card lift reveal relative overflow-hidden">
+        <span class="absolute right-4 top-3 text-5xl font-extrabold text-slate-100"><%= num %></span>
+        <span class="relative flex h-11 w-11 items-center justify-center rounded-xl bg-ink text-white">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><%= icon %></svg>
+        </span>
+        <h3 class="relative mt-4 font-bold text-ink"><%= title %></h3>
+        <p class="relative mt-1 text-sm text-body"><%= body.html_safe %></p>
+      </div>
+    <% end %>
   </div>
+
+  <div class="reveal mt-7 rounded-2xl border border-dashed border-line bg-canvas p-5 text-center">
+    <p class="text-sm font-semibold text-ink">Not sure what to say? Describe the result you want:</p>
+    <div class="mt-3 flex flex-wrap justify-center gap-2">
+      <% ["“Change the homepage headline to…”", "“Make the main colour orange.”", "“Add a contact page.”", "“When someone signs up, email them.”"].each do |ask| %>
+        <span class="rounded-full border border-line bg-white px-3 py-1.5 text-sm text-body"><%= ask %></span>
+      <% end %>
+    </div>
+  </div>
+
+  <p class="reveal mt-8 text-center text-sm">
+    <%= link_to "← Back to your checklist", root_path, class: "font-semibold text-brand hover:underline" %>
+  </p>
 </section>
 
 <%= render "guide/behaviors" %>

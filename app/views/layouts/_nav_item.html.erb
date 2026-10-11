@@ -1,0 +1,5 @@
+<%# A sidebar link. locals: label, path, icon (raw SVG paths), active (bool). %>
+<%= link_to path, class: "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition #{active ? "bg-brand-soft text-brand" : "text-body hover:bg-slate-50 hover:text-ink"}" do %>
+  <svg class="h-5 w-5 shrink-0 <%= active ? "text-brand" : "text-subtle" %>" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><%= icon %></svg>
+  <%= label %>
+<% end %>

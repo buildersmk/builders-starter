@@ -21,6 +21,19 @@ class SignInFlowTest < ActionDispatch::IntegrationTest
     assert cookies[:session_id].present?, "a session cookie is set"
   end
 
+  test "the dashboard renders in the app shell after signing in" do
+    identity = identities(:owner)
+    perform_enqueued_jobs { post session_code_path, params: { email_address: identity.email_address } }
+    code = ActionMailer::Base.deliveries.last.subject[/\d{6}/]
+    post session_path, params: { code: code }
+
+    get dashboard_path
+    assert_response :success
+    assert_select "aside#app-sidebar"   # classic left sidebar
+    assert_select "header"              # top bar
+    assert_match "Welcome", response.body
+  end
+
   test "an unknown email reveals nothing and sends no mail" do
     assert_no_enqueued_emails do
       post session_code_path, params: { email_address: "nobody@example.com" }
