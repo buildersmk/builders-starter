@@ -25,7 +25,7 @@ gem "bcrypt", "~> 3.1.7"
 
 # --- Integrations (each idle until its ENV key is set; see .env.example) ---
 # Stripe — subscription billing (checkout + customer portal + webhook)
-gem "stripe", "~> 15.0"
+gem "stripe", "~> 20.0"
 # Faraday — HTTP client for the Kit (ConvertKit) boundary
 gem "faraday", "~> 2.0"
 # Web Push (PWA notifications) with VAPID — self-hosted, no third party. Idle until keys are set.
