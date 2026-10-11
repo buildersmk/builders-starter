@@ -1,4 +1,0 @@
-# Lets `doppler setup` (and bin/setup) pick the right project/config automatically.
-setup:
-  project: builders-starter
-  config: dev

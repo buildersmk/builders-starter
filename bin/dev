@@ -13,5 +13,5 @@ export RUBY_DEBUG_OPEN="true"
 export RUBY_DEBUG_LAZY="true"
 
 # Secrets come from your local .env (loaded automatically by dotenv) — no setup required.
-# Prefer Doppler? Run the app through it explicitly:  doppler run -- bin/dev
+# On a team, run the app through your secrets manager instead:  <tool> run -- bin/dev
 exec foreman start -f Procfile.dev "$@"

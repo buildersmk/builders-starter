@@ -42,9 +42,9 @@ to hunt for. The first visitor to sign up becomes the owner.
 ## 3. Integrations — idle until keyed
 
 Each no-ops (or self-serves, in dev) until its ENV key is set. See `.env.example` for every key +
-where to get it. `bin/setup` leads with a local `.env` (default); Doppler is an explicit opt-in
-(`doppler run -- bin/dev`). The catalog of integrations + where-to-get-each-key is also in
-`app/models/starter_guide.rb`, surfaced to the founder on the dev-only Starter Guide (see §7).
+where to get it. Keys live in a local `.env` (gitignored, loaded automatically in dev; a team can
+inject them with any secrets manager instead). The catalog of integrations + where-to-get-each-key
+is also in `app/models/starter_guide.rb`, surfaced to the founder on the dev-only Starter Guide (see §7).
 
 | What | Where | Key |
 |---|---|---|
@@ -73,15 +73,15 @@ account to Pro so the flow is walkable in dev. One subscription product, resolve
 ## 5. Running it
 
 ```bash
-bin/setup          # deps, set up .env (or Doppler), prepare the SQLite dev database
+bin/setup          # deps, create .env from the template, prepare the SQLite dev database
 bin/dev            # Puma + Tailwind watcher on http://localhost:3100
-bin/rails test     # Minitest (SQLite; add PARALLEL_WORKERS=1 if pg/sqlite forking misbehaves)
+bin/rails test     # Minitest (runs on SQLite — nothing to set up)
 bin/rubocop        # omakase style
 ```
 
 Development needs **no database to install** — SQLite lives under `storage/`. The `DATABASE_*` env
-vars are production-only (Postgres/Supabase). Prefer Doppler? Run through it explicitly:
-`doppler run -- bin/dev` and `doppler run -- claude` (so the app *and* your AI agent get the keys).
+vars are production-only (Postgres/Supabase). Secrets come from a local `.env` in dev; a team can
+inject them with any secrets manager (`<tool> run -- bin/dev`) instead.
 
 ## 6. House rules (and see STYLE.md)
 

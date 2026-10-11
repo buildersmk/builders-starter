@@ -25,18 +25,11 @@ sign up becomes the owner.
 ## Secrets
 
 Every key is optional — the app boots without any, each integration just stays off until you add
-its key. See `.env.example` for the full list and where to get each one.
+its key. Copy `.env.example` → `.env` and fill in what you need; it's gitignored and loaded
+automatically by `bin/dev`. See `.env.example` for the full list and where to get each one.
 
-- **Local `.env`** (default) — copy `.env.example` → `.env`, fill in what you need. Loaded
-  automatically by `bin/dev`. Nothing to install.
-- **Doppler** (for teams) — no secrets on disk, syncs local → prod, and can feed your AI coding
-  agent too. Run the app *through* Doppler, explicitly:
-
-  ```bash
-  doppler setup                 # one-time: link this repo to a Doppler project
-  doppler run -- bin/dev        # the app gets your keys
-  doppler run -- claude         # your agent gets them too
-  ```
+> Prefer a secrets manager (e.g. Doppler) for a team? Any tool that injects env vars works —
+> run the app through it (`<tool> run -- bin/dev`). Not needed to build solo.
 
 ## What's inside
 
@@ -55,7 +48,7 @@ its key. See `.env.example` for the full list and where to get each one.
 ## Commands
 
 ```bash
-bin/rails test     # Minitest (+ PARALLEL_WORKERS=1 if pg forking misbehaves)
+bin/rails test     # Minitest (runs on SQLite — nothing to set up)
 bin/rubocop        # omakase style
 bin/rails stripe:setup                      # create the Pro product + price in Stripe
 bin/rails "stripe:webhook[https://host]"    # create the webhook, print its signing secret

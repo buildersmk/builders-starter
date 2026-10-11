@@ -31,7 +31,7 @@ Vanilla Rails, 37signals/omakase house style. Read this before writing Ruby.
 
 - Minitest + fixtures + Capybara system tests. No RSpec/FactoryBot.
 - Don't ship a behavior change without at least one covering test.
-- On this Postgres setup, run the suite with `PARALLEL_WORKERS=1` if forking crashes the pg driver.
+- Tests run on SQLite (dev/test) — nothing to set up; just `bin/rails test`.
 
 ## Integrations
 

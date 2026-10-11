@@ -34,37 +34,18 @@ FileUtils.chdir APP_ROOT do
   system("bundle check") || system!("bundle install")
 
   puts "\n== Secrets =="
-  puts "How do you want to manage API keys? (all keys are optional — the app runs without any)"
-  puts "  1) Local .env file  — simplest, nothing to install  [default]"
-  puts "  2) Doppler          — for teams: no secrets on disk, syncs to prod, feeds your AI agent"
-  puts "  3) Skip for now"
-  choice = ask("Choose [1/2/3] (Enter = 1): ")
+  puts "API keys are all optional — the app runs without any. They live in a local .env file"
+  puts "(gitignored, loaded automatically in dev)."
+  choice = ask("Create .env from the template now? [Y/n] (Enter = yes): ")
 
-  case choice
-  when "2", "doppler"
-    if system("command -v doppler > /dev/null 2>&1")
-      puts "\nRunning `doppler setup` — pick (or create) your project + config…"
-      system "doppler setup"
-      puts "\n✓ Doppler linked. Add your keys with the dashboard or:  doppler secrets set RESEND_API_KEY"
-      print_integration_guide
-      puts "\n  Then run the app (and your AI agent) THROUGH Doppler so they get the keys:"
-      puts "    doppler run -- bin/dev"
-      puts "    doppler run -- claude"
-    else
-      puts "\nDoppler CLI isn't installed. Install it: https://docs.doppler.com/docs/install-cli"
-      puts "Falling back to a local .env for now."
-      FileUtils.cp ".env.example", ".env" unless File.exist?(".env")
-      print_integration_guide
-    end
-  when "3", "skip"
-    puts "Skipping — add keys later via a .env file or Doppler. See .env.example."
+  if %w[n no].include?(choice)
+    puts "Skipping — add keys later by copying .env.example to .env. See .env.example."
+  elsif File.exist?(".env")
+    puts "\n✓ .env already exists — leaving it untouched."
+    print_integration_guide
   else
-    if File.exist?(".env")
-      puts "\n✓ .env already exists — leaving it untouched."
-    else
-      FileUtils.cp ".env.example", ".env"
-      puts "\n✓ Created .env from .env.example. Open it and fill in what you need:"
-    end
+    FileUtils.cp ".env.example", ".env"
+    puts "\n✓ Created .env from .env.example. Open it and fill in what you need:"
     print_integration_guide
   end
 
@@ -75,5 +56,5 @@ FileUtils.chdir APP_ROOT do
   puts "\n== Removing old logs and tempfiles =="
   system! "bin/rails log:clear tmp:clear"
 
-  puts "\n✓ Done. Start the app with:  bin/dev   (or:  doppler run -- bin/dev)"
+  puts "\n✓ Done. Start the app with:  bin/dev"
 end

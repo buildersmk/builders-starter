@@ -64,11 +64,8 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-end
 
-group :development, :test do
-  # Load ENV from .env for the local/.env secrets path (the Doppler path injects ENV itself,
-  # so this is a no-op under `doppler run`). See bin/setup.
+  # Load ENV from the local .env in dev/test (a no-op if a secrets manager injects ENV instead).
   gem "dotenv-rails"
 end
 
