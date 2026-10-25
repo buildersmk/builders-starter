@@ -27,7 +27,7 @@ gem "bcrypt", "~> 3.1.7"
 # Stripe — subscription billing (checkout + customer portal + webhook)
 gem "stripe", "~> 15.0"
 # Faraday — HTTP client for the Kit (ConvertKit) boundary
-gem "faraday", "~> 2.0"
+gem "faraday", "~> 2.15"
 # Web Push (PWA notifications) with VAPID — self-hosted, no third party. Idle until keys are set.
 gem "web-push", "~> 3.0"
 # OpenRouter + Apify use the stdlib net/http (no gem). Resend uses ActionMailer SMTP (no gem).
